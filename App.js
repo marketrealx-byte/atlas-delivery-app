@@ -1,41 +1,29 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { Truck, Plus } from 'lucide-react';
 
 const App = () => {
-  const [activeTab, setActiveTab] = useState('daily_trips');
-  
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-50 flex flex-col">
-      <header className="border-b border-zinc-800 p-4 bg-zinc-900/50 backdrop-blur-md sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <div className="bg-orange-500 p-2 rounded-lg">
-              <Truck className="w-6 h-6 text-white" />
-            </div>
-            <h1 className="text-xl font-bold tracking-tight">LogiTrack <span className="text-orange-500">Pro</span></h1>
-          </div>
-          <nav className="flex gap-4">
-            <button onClick={() => setActiveTab('daily_trips')} className={`px-4 py-2 rounded-md transition ${activeTab === 'daily_trips' ? 'bg-orange-500 text-white' : 'hover:bg-zinc-800'}`}>Trips</button>
-            <button onClick={() => setActiveTab('reports')} className={`px-4 py-2 rounded-md transition ${activeTab === 'reports' ? 'bg-orange-500 text-white' : 'hover:bg-zinc-800'}`}>Reports</button>
-          </nav>
-        </div>
-      </header>
-
-      <main className="flex-1 p-6 max-w-7xl mx-auto w-full">
-        <div className="space-y-6">
-          <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-bold italic">Fleet Activity</h2>
-            <button className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition">
-              <Plus className="w-4 h-4" /> New Entry
-            </button>
-          </div>
-          <div className="bg-zinc-900 border border-zinc-800 p-8 rounded-xl text-center">
-            <p className="text-zinc-400">Welcome to Atlas Delivery Dashboard!</p>
-            <p className="text-sm text-zinc-500 mt-2">Your system is now LIVE and connected.</p>
-          </div>
-        </div>
-      </main>
+    <div style={{ 
+      backgroundColor: '#09090b', 
+      color: 'white', 
+      height: '100vh', 
+      display: 'flex', 
+      flexDirection: 'column',
+      justifyContent: 'center', 
+      alignItems: 'center',
+      fontFamily: 'sans-serif'
+    }}>
+      <div style={{ backgroundColor: '#f97316', padding: '20px', borderRadius: '15px', marginBottom: '20px' }}>
+        <h1 style={{ margin: 0 }}>🚚</h1>
+      </div>
+      <h1 style={{ fontSize: '2.5rem', fontWeight: 'bold' }}>
+        LogiTrack <span style={{ color: '#f97316' }}>Pro</span>
+      </h1>
+      <p style={{ color: '#a1a1aa', marginTop: '10px' }}>Atlas Delivery Dashboard is LIVE!</p>
+      
+      <div style={{ marginTop: '30px', padding: '20px', border: '1px solid #27272a', borderRadius: '10px', backgroundColor: '#18181b' }}>
+        <p>System Status: <span style={{ color: '#22c55e' }}>● Connected</span></p>
+      </div>
     </div>
   );
 };
