@@ -6,6 +6,8 @@
     <title>LogiTrack Pro | Fleet Dashboard</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com" rel="stylesheet">
     
     <style>
@@ -13,6 +15,7 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 
+    <!-- 🌐 Fixed Import Map with Proper Versions -->
     <script type="importmap">
     {
       "imports": {
@@ -26,9 +29,11 @@
     </script>
 </head>
 <body class="bg-zinc-950 text-zinc-50 overflow-x-hidden">
+    
     <div id="root"></div>
 
-    <!-- 🎯 YAAD RAKHNA: GitHub par file ka naam App.js hona chahiye -->
-    <script type="module" src="/App.js"></script>
+    <!-- 🎯 Change: src ko "./App.js" kiya taake Vercel path sahi pakde -->
+    <script type="module" src="./App.js"></script>
+
 </body>
 </html>
