@@ -1,152 +1,89 @@
+import React, { useState, useEffect } from 'react';
+import { createRoot } from 'react-dom/client';
+import { 
+  LayoutDashboard, Truck, Fuel, Wallet, 
+  BarChart3, AlertCircle, Plus, Download, Search 
+} from 'lucide-react';
+import { 
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, 
+  Tooltip, ResponsiveContainer, LineChart, Line 
+} from 'recharts';
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { Tab, DashboardData, Notification } from './types';
-import { fetchDashboardData, submitData } from './services/api';
-import Sidebar from './components/Sidebar';
-import Trips from './components/Trips';
-import Finance from './components/Finance';
-import Foundation from './components/Foundation';
-import Reports from './components/Reports';
-import NotificationSystem from './components/NotificationSystem';
-import { Loader2, RefreshCcw, Bell, User } from 'lucide-react';
-
-const App: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<Tab>(Tab.TRIPS);
-  const [loading, setLoading] = useState(true);
-  const [data, setData] = useState<DashboardData | null>(null);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-
-  const addNotification = (type: 'success' | 'error', message: string) => {
-    const id = Math.random().toString(36).substr(2, 9);
-    setNotifications(prev => [...prev, { id, type, message }]);
-    setTimeout(() => removeNotification(id), 5000);
-  };
-
-  const removeNotification = (id: string) => {
-    setNotifications(prev => prev.filter(n => n.id !== id));
-  };
-
-  const loadData = useCallback(async () => {
-    setLoading(true);
-    try {
-      const result = await fetchDashboardData();
-      setData(result);
-    } catch (err) {
-      addNotification('error', 'Cloud connection failed. Check network integrity.');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    loadData();
-  }, [loadData]);
-
-  const handleTripSubmit = async (rowData: any[]) => {
-    const success = await submitData('Daily_Trips', rowData);
-    if (success) {
-      addNotification('success', 'Trip dispatch archived in Atlas.');
-      loadData();
-    } else {
-      addNotification('error', 'Sync protocol failed.');
-    }
-  };
-
-  const handleFuelSubmit = async (rowData: any[]) => {
-    const success = await submitData('Fuel_Log', rowData);
-    if (success) {
-      addNotification('success', 'Fuel transaction logged.');
-      loadData();
-    } else {
-      addNotification('error', 'Push rejected by Atlas Cloud.');
-    }
-  };
-
-  const handleExpenseSubmit = async (rowData: any[]) => {
-    const success = await submitData('Expenses', rowData);
-    if (success) {
-      addNotification('success', 'Fiscal expenditure updated.');
-      loadData();
-    } else {
-      addNotification('error', 'Financial record failed.');
-    }
-  };
-
-  const renderContent = () => {
-    if (loading && !data) {
-      return (
-        <div className="flex-1 flex items-center justify-center bg-slate-950 min-h-[60vh]">
-          <div className="flex flex-col items-center gap-8">
-            <div className="relative">
-              <div className="absolute -inset-10 bg-blue-600/10 blur-[60px] rounded-full animate-pulse"></div>
-              <Loader2 className="animate-spin text-blue-500 relative" size={72} strokeWidth={1} />
-            </div>
-            <div className="text-center space-y-3">
-              <p className="text-white font-black text-3xl tracking-tighter uppercase italic">Atlas Operations</p>
-              <p className="text-slate-600 text-[10px] font-black tracking-[0.4em] uppercase">Checking 2D Array Integrity...</p>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    if (!data) return null;
-
-    switch (activeTab) {
-      case Tab.TRIPS:
-        return <Trips trips={data.trips} trucks={data.trucks} drivers={data.drivers} onSubmit={handleTripSubmit} />;
-      case Tab.FINANCE:
-        return <Finance fuel={data.fuel} expenses={data.expenses} trucks={data.trucks} onSubmitFuel={handleFuelSubmit} onSubmitExpense={handleExpenseSubmit} />;
-      case Tab.FOUNDATION:
-        return <Foundation trucks={data.trucks} drivers={data.drivers} />;
-      case Tab.REPORTS:
-        return <Reports trips={data.trips} fuel={data.fuel} expenses={data.expenses} />;
-      default:
-        return null;
-    }
-  };
-
+const App = () => {
+  const [activeTab, setActiveTab] = useState('daily_trips');
+  
   return (
-    <div className="flex min-h-screen bg-black text-slate-100 selection:bg-blue-600/30 font-sans antialiased">
-      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
-      
-      <main className="flex-1 p-10 lg:p-16 overflow-y-auto max-h-screen relative no-scrollbar bg-gradient-to-br from-slate-950 to-black">
-        <header className="mb-16 flex items-center justify-between">
-          <div className="flex items-center gap-6">
-            <div className="bg-gradient-to-tr from-blue-600 to-indigo-600 p-3.5 rounded-2xl border border-blue-400/20 shadow-2xl shadow-blue-900/10">
-              <User className="text-white" size={28} />
+    <div className="min-h-screen bg-zinc-950 text-zinc-50 flex flex-col">
+      {/* Sidebar / Header */}
+      <header className="border-b border-zinc-800 p-4 bg-zinc-900/50 backdrop-blur-md sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <div className="bg-orange-500 p-2 rounded-lg">
+              <Truck className="w-6 h-6 text-white" />
             </div>
-            <div>
-              <h1 className="text-2xl font-black text-white tracking-tight">Malak Zubair</h1>
-              <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mt-1">Fleet Manager | Atlas Delivery</p>
-            </div>
+            <h1 className="text-xl font-bold tracking-tight">LogiTrack <span className="text-orange-500">Pro</span></h1>
           </div>
-          
-          <div className="flex items-center gap-5">
-            <button 
-              onClick={loadData}
-              disabled={loading}
-              className="px-8 py-3.5 rounded-2xl bg-slate-900/60 border border-slate-800 text-slate-300 hover:text-white transition-all hover:border-slate-700 disabled:opacity-50 flex items-center gap-3 text-xs font-black uppercase tracking-widest shadow-xl"
-            >
-              <RefreshCcw className={loading ? "animate-spin" : ""} size={14} />
-              Core Sync
-            </button>
-            <div className="h-10 w-[1px] bg-slate-800/60 mx-1"></div>
-            <button className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 text-slate-500 hover:text-white relative transition-all group">
-              <Bell size={20} />
-              <span className="absolute top-4 right-4 w-2.5 h-2.5 bg-blue-600 rounded-full border-[3px] border-slate-950 shadow-lg group-hover:bg-blue-400 transition-colors"></span>
-            </button>
-          </div>
-        </header>
-
-        <div className="max-w-7xl mx-auto">
-          {renderContent()}
+          <nav className="flex gap-4">
+            <button onClick={() => setActiveTab('daily_trips')} className={`px-4 py-2 rounded-md transition ${activeTab === 'daily_trips' ? 'bg-orange-500 text-white' : 'hover:bg-zinc-800'}`}>Trips</button>
+            <button onClick={() => setActiveTab('reports')} className={`px-4 py-2 rounded-md transition ${activeTab === 'reports' ? 'bg-orange-500 text-white' : 'hover:bg-zinc-800'}`}>Reports</button>
+          </nav>
         </div>
-      </main>
+      </header>
 
-      <NotificationSystem notifications={notifications} remove={removeNotification} />
+      {/* Main Content */}
+      <main className="flex-1 p-6 max-w-7xl mx-auto w-full">
+        {activeTab === 'daily_trips' ? (
+          <div className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-bold italic">Fleet Activity</h2>
+              <button className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition">
+                <Plus className="w-4 h-4" /> New Entry
+              </button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-zinc-900 border border-zinc-800 p-4 rounded-xl">
+                <p className="text-zinc-400 text-sm">Total KM Today</p>
+                <p className="text-2xl font-bold">1,240 <span className="text-sm font-normal text-zinc-500">km</span></p>
+              </div>
+              <div className="bg-zinc-900 border border-zinc-800 p-4 rounded-xl">
+                <p className="text-zinc-400 text-sm">Fuel Consumed</p>
+                <p className="text-2xl font-bold text-orange-400">320 <span className="text-sm font-normal text-zinc-500">L</span></p>
+              </div>
+              <div className="bg-zinc-900 border border-zinc-800 p-4 rounded-xl">
+                <p className="text-zinc-400 text-sm">Pending Alerts</p>
+                <p className="text-2xl font-bold text-red-500">2</p>
+              </div>
+            </div>
+            <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
+               <table className="w-full text-left">
+                 <thead className="bg-zinc-800/50 text-zinc-400 text-xs uppercase tracking-wider">
+                   <tr>
+                     <th className="p-4">Truck ID</th>
+                     <th className="p-4">Route</th>
+                     <th className="p-4">Status</th>
+                   </tr>
+                 </thead>
+                 <tbody className="divide-y divide-zinc-800">
+                   <tr className="hover:bg-zinc-800/30 transition">
+                     <td className="p-4 font-medium">T-9021</td>
+                     <td className="p-4">Karachi → Lahore</td>
+                     <td className="p-4"><span className="bg-green-500/10 text-green-500 px-2 py-1 rounded text-xs">Completed</span></td>
+                   </tr>
+                 </tbody>
+               </table>
+            </div>
+          </div>
+        ) : (
+          <div className="p-12 text-center text-zinc-500">
+            Reports and Charts are loading...
+          </div>
+        )}
+      </main>
     </div>
   );
 };
 
-export default App;
+// Root mount
+const container = document.getElementById('root');
+const root = createRoot(container);
+root.render(<App />);
