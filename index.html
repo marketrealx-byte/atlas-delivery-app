@@ -18,12 +18,14 @@
             color: #fafafa;
             margin: 0;
         }
-        /* Hide scrollbars but keep functionality */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 
-    <!-- 🌐 Import Map: Tells the browser where to find React and Icons -->
+    <!-- Shims for better browser compatibility -->
+    <script async src="https://ga.jspm.io"></script>
+
+    <!-- 🌐 Fixed Import Map -->
     <script type="importmap">
     {
       "imports": {
@@ -39,11 +41,10 @@
 
 <body class="bg-zinc-950 text-zinc-50 overflow-x-hidden">
     
-    <!-- 🏗️ The Root: Where your dashboard will appear -->
     <div id="root"></div>
 
-    <!-- 🚀 THE ENGINE: Loading your App.tsx file -->
-    <script type="module" src="/App.tsx"></script>
+    <!-- 🎯 IMPORTANT: Ensure your file on GitHub is named App.js (not App.tsx) -->
+    <script type="module" src="/App.js"></script>
 
 </body>
 </html>
